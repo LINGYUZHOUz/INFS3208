@@ -1,28 +1,74 @@
-version: '1.0'
-
 services:
-  # Backend API
-  backend:
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-lb
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx-lb.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend1
+      - backend2
+      - backend3
+      - frontend
+    networks:
+      - app-network
+
+  backend1:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: news-backend
+    container_name: news-backend-1
     restart: unless-stopped
     environment:
       NODE_ENV: production
       PORT: 5001
-      MONGO_URI: mongodb+srv://lingyuzhou:VALENTINE7987@cluster0.n6spcdu.mongodb.net/NewsMIS?retryWrites=true&w=majority&appName=Cluster0
+      INSTANCE_ID: "Backend-1"
+      MONGO_URI: mongodb+srv://lingyuzhou:VALENTINE7987@cluster0.n6spcdu.@cluster0.fo9bl.mongodb.net/NewsMIS?retryWrites=true&w=majority&appName=Cluster0
       JWT_SECRET: 2J8zqkP7VN6bxzg+Wy7DQZsd3Yx8mF3Bl0kch6HYtFs=
-    ports:
-      - "3001:5001"
-  # Frontend React App
+    networks:
+      - app-network
+
+  backend2:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: news-backend-2
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 5001
+      INSTANCE_ID: "Backend-2"
+      MONGO_URI: mongodb+srv://lingyuzhou:VALENTINE7987@cluster0.n6spcdu.@cluster0.fo9bl.mongodb.net/NewsMIS?retryWrites=true&w=majority&appName=Cluster0
+      JWT_SECRET: 2J8zqkP7VN6bxzg+Wy7DQZsd3Yx8mF3Bl0kch6HYtFs=
+    networks:
+      - app-network
+
+  backend3:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: news-backend-3
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 5001
+      INSTANCE_ID: "Backend-3"
+      MONGO_URI: mongodb+srv://lingyuzhou:VALENTINE7987@cluster0.n6spcdu.@cluster0.fo9bl.mongodb.net/NewsMIS?retryWrites=true&w=majority&appName=Cluster0
+      JWT_SECRET: 2J8zqkP7VN6bxzg+Wy7DQZsd3Yx8mF3Bl0kch6HYtFs=
+    networks:
+      - app-network
+
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: news-frontend
     restart: unless-stopped
-    ports:
-      - "8080:8080"
-    depends_on:
-      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
