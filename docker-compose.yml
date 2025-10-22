@@ -1,0 +1,28 @@
+version: '1.0'
+
+services:
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: news-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 5001
+      MONGO_URI: mongodb+srv://dbUser:Wu774790547.@cluster0.fo9bl.mongodb.net/NewsMIS?retryWrites=true&w=majority&appName=Cluster0
+      JWT_SECRET: 2J8zqkP7VN6bxzg+Wy7DQZsd3Yx8mF3Bl0kch6HYtFs=
+    ports:
+      - "3001:5001"
+  # Frontend React App
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: news-frontend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend
