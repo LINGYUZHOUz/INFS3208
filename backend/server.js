@@ -9,6 +9,17 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(cors());
+app.use(express.json());
+
+// Add request logging middleware
+app.use((req, res, next) => {
+    const instanceId = process.env.INSTANCE_ID || 'Unknown';
+    console.log(`[${instanceId}] ${req.method} ${req.path}`);
+    next();
+});
+
+app.use('/api/auth', require('./routes/authRoutes'));
 
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/news', require('./routes/newRoutes'));
