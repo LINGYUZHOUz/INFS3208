@@ -15,7 +15,8 @@ app.use(express.json());
 // Add request logging middleware
 app.use((req, res, next) => {
     const instanceId = process.env.INSTANCE_ID || 'Unknown';
-    console.log(`[${instanceId}] ${req.method} ${req.path}`);
+    const version = 'v2.0';
+    console.log(`[${instanceId}] [${version}] ${req.method} ${req.path}`);
     next();
 });
 
