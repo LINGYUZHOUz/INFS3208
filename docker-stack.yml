@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx-lb.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - app-network
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  backend:
+    image: infs3208_backend:latest
+    environment:
+      NODE_ENV: production
+      PORT: 5001
+      MONGO_URI: "mongodb+srv://lingyuzhou:VALENTINE7987@cluster0.n6spcdu.mongodb.net/NewsMIS?retryWrites=true&w=majority&appName=Cluster0"
+      JWT_SECRET: 2J8zqkP7VN6bxzg+Wy7DQZsd3Yx8mF3Bl0kch6HYtFs=
+    networks:
+      - app-network
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+
+  frontend:
+    image: infs3208_frontend:latest
+    networks:
+      - app-network
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+networks:
+  app-network:
+    driver: overlay
